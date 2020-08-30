@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Dorgra test</title>
+
+    <style>
+      form input[type=text] {
+        width: 300px;
+      }
+    </style>
+  </head>
+  <body>
+    <form>
+      <input name="codigo" type="text">
+      <button type="submit">Validar</button>
+    </form>
+
+    <script>
+      const form  = document.querySelector('form'),
+            input = document.querySelector('input[name=codigo]')
+
+      form.addEventListener('submit', async event => {
+        event.preventDefault()
+
+        try {
+          const response = await fetch(`${location.origin}/api/boleto/validar`, {
+            method: 'POST',
+            body: JSON.stringify({
+              boleto: input.value
+            })
+          })
+
+          const { success, data } = await response.json()
+
+          if (!success)
+            throw { message: 'Falha na requisição' }
+
+          let message = 'Boleto '
+
+          if (!data.valido) {
+            message += ` inválido! ${data.message}`
+          } else {
+            message += ` válido!
+Valor: ${parseFloat(data.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+Vencimento: ${(new Date(data.vencimento.substr(0, data.vencimento.length - 1))).toLocaleString('pt-BR', { dateStyle: 'short' })}
+Código: ${data.codigo}`
+          }
+
+          alert(message)
+        } catch (error) {
+          alert(error.message || 'Falha ao validar boleto')
+          console.error(error)
+        }
+      })
+    </script>
+  </body>
+</html>
