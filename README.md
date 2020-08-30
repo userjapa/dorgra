@@ -3,9 +3,9 @@
 ## Iniciar a aplicação
 
 ``` bash
-# install dependencies
+# instalar dependências
 npm i
 
-# run application
+# iniciar a aplicação
 npm start
 ```
